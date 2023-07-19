@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Telegram WebApps API</title>
+    <link rel="stylesheet" type="text/css" href="CSS/style.css" />
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script>"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.js"</script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script type="module">
+        import { config } from "./config.js";
+        console.log(config.host);
+        let tg = window.Telegram.WebApp;
+        let userId = tg.initDataUnsafe.user.id;
+        // let userId = 1;
+        sessionStorage.setItem("user", userId);
+        const url = config.host + "/dream_item/" + userId;
+        console.log(url);
+        addEventListener("load", logVisit);
+
+        async function logVisit() {
+            try {
+                let url = config.host + "/system_data";
+                console.log(url)
+                await fetch(url, {
+                    method: 'PUT'
+                })
+                    .then(r => r.json())
+                    .then(({ session_id }) => {
+                        console.log('Code after then');
+                        console.log(session_id);
+                        sessionStorage.setItem("session", session_id)
+                    });
+            }
+            catch {
+                console.log("не отправилось");
+            }
+        };
+    </script>
+
+    <script type="module">
+        import { config } from "../config.js";
+
+        window.addEventListener("web_app_close", (event) => {
+            try {
+                // Если браузер не поддерживает sendBeacon, функция завершится
+                if (!navigator.sendBeacon) return undefined;
+
+                const sessionId = sessionStorage.getItem("session");
+
+                // Отправка данных
+                const formData = new FormData();
+                formData.append('session_id', sessionId);
+                navigator.sendBeacon(config.host + "/system_data", formData);
+            } catch { }
+
+            return undefined;
+        });
+    </script>
+</head>
+
+<!-- ЗАПИСЬ -->
+<template id="home">
+    <section id="index" class="flex column">
+        <h1>Запиши свой сон</h1>
+        <button id="recordBtn" class="audio-btn flex">
+            <svg width="53" height="71">
+                <use xlink:href="./icons/button.svg#voice"></use>
+            </svg>
+        </button>
+        <h1 id="time"><time>00:00:00</time></h1>
+        <div class="flex center">
+            <button id="delete" class="del"><svg width="36" height="36">
+                    <use xlink:href="./icons/button.svg#delete"></use>
+                </svg></button>
+            <button id="sendBtn" class="btn" disabled>Отправить</button>
+        </div>
+
+    </section>
+
+</template>
+
+<!-- ДНЕВНИК -->
+<template id="dairy">
+    <h1>Дневник сновидений</h1>
+    <form>
+        <input placeholder="Название...">
+    </form>
+    <h2>Фильтровать по дате:</h2>
+    <form class="flex" id="filter">
+        <section class="string flex">
+            <label for="date-start">Начало:</label>
+            <input type="date" id="date-start" name="date" />
+        </section>
+
+        <section class="string flex">
+            <label for="date-stop">Конец:</label>
+            <input type="date" id="date-stop" name="date" />
+        </section>
+        <div class="buttons flex">
+            <input type="submit" class="btn" id="sort" value="Показать">
+            <button id="reset" class="btn">Сбросить</button>
+        </div>
+        <p class="error_text"></p>
+    </form>
+    <article class="flex" id="card-section">
+    </article>
+</template>
+
+<!-- ОДИН СОН -->
+<template id="single">
+    <section id="title" class="flex">
+        <a href="/dairy">
+            <svg width="13" height="19">
+                <use xlink:href="./icons/button.svg#back"></use>
+            </svg>
+        </a>
+        <h1></h1>
+        <div>
+
+        </div>
+        <a id="del" class="del">
+            <svg width="36" height="36">
+                <use xlink:href="./icons/button.svg#delete"></use>
+            </svg>
+        </a>
+        <a id="btn-edit" href="/edit">
+            <svg width="20" height="19">
+                <use xlink:href="./icons/button.svg#edit"></use>
+            </svg>
+        </a>
+    </section>
+
+    <div id="all-content">
+        <div class="main-pic">
+            <img id="main-pic" onerror="this.src='images/not_found.png';">
+        </div>
+
+        <article id="dream-content" class="flex column">
+
+            <section id="infobar" class="flex">
+                <section id="emoji"></section>
+            </section>
+
+            <section class="tag-section">
+                <h2>Главные образы сна</h2>
+                <section class="tags flex">
+                </section>
+            </section>
+
+            <section id="prediction">
+                <h2>Предсказание:</h2>
+            </section>
+            <section id="pictures" class="pictures flex">
+
+                <h2>Изображения</h2>
+                <img id="pic1" onerror="this.src='images/not_found.png';">
+                <img id="pic2" onerror="this.src='images/not_found.png';">
+                <img id="pic3" onerror="this.src='images/not_found.png';">
+            </section>
+
+        </article>
+    </div>
+
+
+</template>
+
+<!-- РЕДАКТИРОВАНИЕ -->
+<template id="edit">
+    <form class="flex column full-width" action="/dream">
+        <section class="flex title">
+            <a id="btn-back" href="/dream">
+                <svg width="13" height="19">
+                    <use xlink:href="./icons/button.svg#back"></use>
+                </svg>
+            </a>
+            <h1>Редактировать сон</h1>
+        </section>
+        <div class="flex column full-width gap" id="content">
+            <h2>Введите название</h2>
+            <input id="new_title" type="text" placeholder="Название сна.." name="Title">
+            <h2>Каким был сон?</h2>
+            <section id="emoji-edit" class="flex">
+                <input class="hidden" id="happy" type="checkbox" name="Счастье">
+                <label for="happy"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14" cy="14" r="13" stroke="#B8B8EE" stroke-opacity="0.7" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M12 11.7916C11.6878 11.2396 11.1805 10.7749 10.5422 10.4564C9.90388 10.1379 9.16327 9.97976 8.414 10.0021C7.66473 10.0244 6.94046 10.2261 6.33277 10.5817C5.72509 10.9374 5.26128 11.4309 5 12"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                        <path
+                            d="M19 17.2084C18.554 17.7604 17.8293 18.2251 16.9174 18.5436C16.0055 18.8621 14.9475 19.0202 13.8771 18.9979C12.8068 18.9756 11.7721 18.7739 10.904 18.4183C10.0358 18.0626 9.37325 17.5691 9 17"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                        <path
+                            d="M23 11.7916C22.6878 11.2396 22.1805 10.7749 21.5422 10.4564C20.9039 10.1379 20.1633 9.97976 19.414 10.0021C18.6647 10.0244 17.9405 10.2261 17.3328 10.5817C16.7251 10.9374 16.2613 11.4309 16 12"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                    </svg>
+                </label>
+
+                <input class="hidden" id="sad" type="checkbox" name="Грусть">
+                <label for="sad">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14" cy="14" r="13" stroke="#B8B8EE" stroke-opacity="0.7" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M12 13.2084C11.6878 13.7604 11.1805 14.2251 10.5422 14.5436C9.90388 14.8621 9.16327 15.0202 8.414 14.9979C7.66473 14.9756 6.94046 14.7739 6.33277 14.4183C5.72509 14.0626 5.26128 13.5691 5 13"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                        <path
+                            d="M23 13.2084C22.6878 13.7604 22.1805 14.2251 21.5422 14.5436C20.9039 14.8621 20.1633 15.0202 19.414 14.9979C18.6647 14.9756 17.9405 14.7739 17.3328 14.4183C16.7251 14.0626 16.2613 13.5691 16 13"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                        <path
+                            d="M17 18.8958C16.7324 18.6198 16.2976 18.3875 15.7504 18.2282C15.2033 18.0689 14.5685 17.9899 13.9263 18.001C13.2841 18.0122 12.6633 18.1131 12.1424 18.2909C11.6215 18.4687 11.224 18.7155 11 19"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                    </svg>
+                </label>
+
+                <input class="hidden" id="angry" type="checkbox" name="Злость">
+                <label for="angry">
+                    <svg width="29" height="28" viewBox="0 0 29 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14.1833" cy="14" r="13" stroke="#B8B8EE" stroke-opacity="0.7" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M7.18335 10L12.1833 13" stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M16.1833 13L21.1833 10" stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path
+                            d="M25.2651 1.20711C25.3225 1.26455 25.3681 1.33273 25.3992 1.40777C25.4303 1.48281 25.4463 1.56324 25.4463 1.64447C25.4463 1.72569 25.4303 1.80612 25.3992 1.88116C25.3681 1.95621 25.3225 2.02439 25.2651 2.08183C25.2077 2.13926 25.1395 2.18482 25.0644 2.2159C24.9894 2.24699 24.909 2.26298 24.8277 2.26298C24.7465 2.26298 24.6661 2.24699 24.591 2.2159C24.516 2.18482 24.4478 2.13926 24.3904 2.08183"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                        <path
+                            d="M26.7583 4.44975C26.7009 4.39231 26.6553 4.32413 26.6243 4.24909C26.5932 4.17405 26.5772 4.09362 26.5772 4.01239C26.5772 3.93117 26.5932 3.85074 26.6243 3.7757C26.6553 3.70065 26.7009 3.63247 26.7583 3.57504C26.8158 3.5176 26.884 3.47204 26.959 3.44096C27.034 3.40987 27.1145 3.39388 27.1957 3.39388C27.2769 3.39388 27.3574 3.40987 27.4324 3.44096C27.5074 3.47204 27.5756 3.5176 27.6331 3.57504"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                        <path
+                            d="M27.6331 2.08181C27.5757 2.13924 27.5075 2.1848 27.4325 2.21588C27.3574 2.24697 27.277 2.26296 27.1958 2.26296C27.1146 2.26296 27.0341 2.24697 26.9591 2.21588C26.884 2.1848 26.8159 2.13924 26.7584 2.08181C26.701 2.02437 26.6554 1.95619 26.6243 1.88114C26.5933 1.8061 26.5773 1.72567 26.5773 1.64445C26.5773 1.56322 26.5933 1.48279 26.6243 1.40775C26.6554 1.33271 26.701 1.26453 26.7584 1.20709"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                        <path
+                            d="M24.3904 3.57506C24.4479 3.51762 24.516 3.47206 24.5911 3.44098C24.6661 3.40989 24.7466 3.3939 24.8278 3.3939C24.909 3.3939 24.9894 3.40989 25.0645 3.44098C25.1395 3.47206 25.2077 3.51762 25.2651 3.57506C25.3226 3.63249 25.3681 3.70067 25.3992 3.77572C25.4303 3.85076 25.4463 3.93119 25.4463 4.01241C25.4463 4.09364 25.4303 4.17407 25.3992 4.24911C25.3681 4.32415 25.3226 4.39233 25.2651 4.44977"
+                            stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round" />
+                    </svg>
+                </label>
+
+                <input class="hidden" id="surprized" type="checkbox" name="Удивление">
+                <label for="surprized">
+                    <svg width="29" height="28" viewBox="0 0 29 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14.3334" cy="14" r="13" stroke="#B8B8EE" stroke-opacity="0.7" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="9.83337" cy="12.5" r="3" stroke="#B8B8EE" stroke-opacity="0.7" />
+                        <circle cx="18.8334" cy="12.5" r="3" stroke="#B8B8EE" stroke-opacity="0.7" />
+                    </svg>
+
+                </label>
+
+                <input class="hidden" id="fear" type="checkbox" name="Страх">
+                <label for="fear">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 10L22 15" stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M17 15L22 10" stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <circle cx="14" cy="14" r="13" stroke="#B8B8EE" stroke-opacity="0.7" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6 10L11 15" stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M6 15L11 10" stroke="#B8B8EE" stroke-opacity="0.7" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </label>
+
+                <input class="hidden" id="disgusting" type="checkbox" name="Отвращение">
+                <label for="disgusting">
+                    <svg width="29" height="28" viewBox="0 0 29 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="6.31665" y1="11.5" x2="11.3167" y2="11.5" stroke="#B8B8EE" stroke-opacity="0.7"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M11.8167 15.5V19C11.8167 19.7956 12.1327 20.5587 12.6953 21.1213C13.2579 21.6839 14.021 22 14.8167 22C15.6123 22 16.3754 21.6839 16.938 21.1213C17.5006 20.5587 17.8167 19.7956 17.8167 19V15.5"
+                            stroke="#B8B8EE" stroke-opacity="0.7" />
+                        <line x1="10.3167" y1="15.5" x2="19.3167" y2="15.5" stroke="#B8B8EE" stroke-opacity="0.7"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="18.3167" y1="11.5" x2="23.3167" y2="11.5" stroke="#B8B8EE" stroke-opacity="0.7"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="14.8167" cy="14" r="13" stroke="#B8B8EE" stroke-opacity="0.7" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </label>
+
+                <input class="hidden" id="hate" type="checkbox" name="Ненависть">
+                <label for="hate">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14" cy="14" r="13" stroke="#B8B8EE" stroke-opacity="0.7" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M16.4981 12.6537C16.223 12.6778 16.0195 12.9203 16.0436 13.1954C16.0676 13.4705 16.3102 13.6739 16.5853 13.6499L18.1213 13.5155C18.2773 14.1143 18.6159 14.6547 19.0962 15.0577C19.7057 15.5692 20.4934 15.8175 21.286 15.7482C22.0786 15.6788 22.8113 15.2974 23.3227 14.6879C23.8341 14.0784 24.0825 13.2907 24.0131 12.4981C23.9891 12.223 23.7466 12.0195 23.4715 12.0436L16.4981 12.6537ZM22.9973 13.0889L19.139 13.4265C19.2571 13.7604 19.463 14.0601 19.739 14.2917C20.1453 14.6326 20.6704 14.7982 21.1989 14.752C21.7273 14.7057 22.2157 14.4515 22.5566 14.0452C22.7882 13.7692 22.9389 13.4383 22.9973 13.0889Z"
+                            fill="#B8B8EE" fill-opacity="0.7" />
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M4.80315 12.0436C4.52806 12.0195 4.28554 12.223 4.26148 12.4981C4.23741 12.7732 4.4409 13.0157 4.716 13.0398L6.25207 13.1742C6.30164 13.791 6.5413 14.3819 6.94432 14.8622C7.45575 15.4717 8.18836 15.8531 8.98098 15.9225C9.7736 15.9918 10.5613 15.7434 11.1708 15.232C11.7803 14.7206 12.1617 13.988 12.231 13.1953C12.2551 12.9203 12.0516 12.6777 11.7765 12.6537L4.80315 12.0436ZM11.128 13.6008L7.26974 13.2632C7.32809 13.6126 7.47876 13.9434 7.71036 14.2195C8.05132 14.6258 8.53972 14.88 9.06814 14.9263C9.59655 14.9725 10.1217 14.8069 10.528 14.466C10.804 14.2344 11.0099 13.9347 11.128 13.6008Z"
+                            fill="#B8B8EE" fill-opacity="0.7" />
+                        <path d="M12 20C12.6667 18.4155 15.6667 18.9437 18 20" stroke="#B8B8EE" stroke-opacity="0.7"
+                            stroke-linecap="round" />
+                    </svg>
+                </label>
+
+                <input class="hidden" id="nothing" type="checkbox" name="Безразличие">
+                <label for="nothing">
+                    <svg width="29" height="28" viewBox="0 0 29 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="14.6666" cy="14" r="13" stroke="#B8B8EE" stroke-opacity="0.7" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="7.16663" y1="11.5" x2="12.1666" y2="11.5" stroke="#B8B8EE" stroke-opacity="0.7"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="17.1666" y1="11.5" x2="22.1666" y2="11.5" stroke="#B8B8EE" stroke-opacity="0.7"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="9.16663" y1="17.5" x2="20.1666" y2="17.5" stroke="#B8B8EE" stroke-opacity="0.7"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </label>
+            </section>
+            <p class="warning-text"></p>
+
+            <h2>Выберите изображение</h2>
+            <p> Выберите изображение, которое наилушим образом описывает сон</p>
+            <section id="img-pick" class="flex pictures">
+                <input class="hidden" id="rb_1" name="cover" type="radio">
+                <label for="rb_1" class="flex"><img onerror="this.src='images/not_found.png';"></label>
+
+                <input class="hidden" id="rb_2" name="cover" type="radio">
+                <label for="rb_2" class="flex"><img onerror="this.src='images/not_found.png';"></label>
+
+                <input class="hidden" id="rb_3" name="cover" type="radio">
+                <label for="rb_3" class="flex"><img onerror="this.src='images/not_found.png';"></label>
+            </section>
+            <input class="btn" href="/dream" type="submit" value="Сохранить">
+
+        </div>
+    </form>
+</template>
+
+<!-- ДАШБОРДЫ -->
+<template id="statistics">
+    <h1>Статистика</h1>
+    <section id="select-data">
+        <input type="month" id="date" name="date" />
+
+    </section>
+    <article id="dashboards">
+        <h2>Эмоции</h2>
+        <section id="emotion-diagram" class="dia-block flex padding">
+            <div id="icons" class="flex column"></div>
+            <div id="numbers" class="flex column"></div>
+            <div id="values" class="bar-diagram flex column"></div>
+        </section>
+
+        <h2>Календарь снов</h2>
+        <section id="dream-days" class="flex" width="100px">
+        </section>
+
+        <h2>Всего снов</h2>
+        <section id="dream-count" class="dia-block flex">
+            <p>Снов за месяц</p>
+            <h2></h2>
+        </section>
+
+        <h2>Длина записи</h2>
+        <section id="duration" class="dia-block padding flex column">
+            <p class="str flex">
+                <span>Среднее время:</span>
+                <span id="mean"></span>
+            </p>
+            <p class="str flex">
+                <span>Максимальное время:</span>
+                <span id="max"></span>
+            </p>
+            <p class="str flex">
+                <span>Минимальное время:</span>
+                <span id="min"></span>
+            </p>
+        </section>
+
+        <h2>Нейронные сети</h2>
+        <section id="neurals" class="dia-block flex">
+            <div id="pie" class="pie"></div>
+            <div id="legend" class="pie flex column"></div>
+        </section>
+    </article>
+</template>
+
+<!-- ТЕЛО СТРАНИЦЫ -->
+
+<body class="flex column">
+    <header>
+        <p>Полисомния</p>
+    </header>
+
+    <main class="flex column padding">
+
+    </main>
+
+    <footer>
+        <nav class="flex">
+            <a href="/index.html">
+                <svg id="voice-page" width="21" height="21" viewBox="0 0 21 21" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <g opacity="0.75">
+                        <mask id="path-1-inside-1_693_1444" fill="white">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M21 10.5175C19.7086 11.8045 17.9272 12.6 15.96 12.6C12.0167 12.6 8.82002 9.40334 8.82002 5.46002C8.82002 3.28729 9.7905 1.34123 11.3216 0.0316736C11.0505 0.0106884 10.7765 0 10.5 0C4.70101 0 0 4.70101 0 10.5C0 16.299 4.70101 21 10.5 21C16.2932 21 20.9905 16.3085 21 10.5175Z" />
+                        </mask>
+                        <path
+                            d="M21 10.5175L23 10.5208C23.0013 9.7119 22.5153 8.98186 21.7685 8.67105C21.0217 8.36025 20.1612 8.52989 19.5882 9.10087L21 10.5175ZM11.3216 0.0316736L12.6216 1.55158C13.2365 1.02566 13.4739 0.18104 13.2231 -0.588251C12.9723 -1.35754 12.2827 -1.89992 11.476 -1.96236L11.3216 0.0316736ZM19.5882 9.10087C18.6564 10.0295 17.3768 10.6 15.96 10.6V14.6C18.4777 14.6 20.7608 13.5794 22.4118 11.9342L19.5882 9.10087ZM15.96 10.6C13.1213 10.6 10.82 8.29877 10.82 5.46002H6.82002C6.82002 10.5079 10.9121 14.6 15.96 14.6V10.6ZM10.82 5.46002C10.82 3.89639 11.5158 2.49738 12.6216 1.55158L10.0217 -1.48823C8.06524 0.185082 6.82002 2.6782 6.82002 5.46002H10.82ZM10.5 2C10.7249 2 10.9475 2.00869 11.1673 2.02571L11.476 -1.96236C11.1536 -1.98732 10.8281 -2 10.5 -2V2ZM2 10.5C2 5.80558 5.80558 2 10.5 2V-2C3.59644 -2 -2 3.59644 -2 10.5H2ZM10.5 19C5.80558 19 2 15.1944 2 10.5H-2C-2 17.4036 3.59644 23 10.5 23V19ZM19 10.5143C18.9923 15.2021 15.1897 19 10.5 19V23C17.3966 23 22.9887 17.4148 23 10.5208L19 10.5143Z"
+                            fill="#050109" mask="url(#path-1-inside-1_693_1444)" />
+                    </g>
+                </svg>
+            </a>
+
+            <a href="/dairy" id="dairy-link">
+                <svg width="36" height="25" viewBox="0 0 36 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M18 2.49997C11.2474 0.57068 8.21702 0.502507 1.72745 2.29545C1.29709 2.41435 1 2.8078 1 3.25428V22.1743C1 22.8386 1.63592 23.3176 2.27769 23.1457C8.39398 21.508 11.4411 21.626 18 23.5M18 2.49997V23.5M18 2.49997C24.7526 0.570683 27.783 0.502555 34.2726 2.2955C34.7029 2.4144 35 2.80785 35 3.25433V22.1743C35 22.8387 34.3641 23.3176 33.7223 23.1458C27.606 21.508 24.5589 21.626 18 23.5M20.5 5.50006C25.5 4.50006 27.5 4.50006 33 5.50006M20.5 9.50006C25.5 8.50006 27.5 8.50006 33 9.50006M20.5 13.5001C25.5 12.5001 27.5 12.5001 33 13.5001M20.5 17.5001C25.5 16.5001 27.5 16.5001 33 17.5001"
+                        stroke="#090910" stroke-width="2" stroke-linejoin="round" />
+                </svg>
+            </a>
+
+            <a href="/statistics">
+                <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect y="7" width="4" height="12" fill="#050109" />
+                    <rect x="7" width="4" height="19" fill="#050109" />
+                    <rect x="14" y="2" width="4" height="17" fill="#050109" />
+                </svg>
+            </a>
+        </nav>
+    </footer>
+</body>
+
+<script src="scripts\recorder.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/page.js/1.11.6/page.js"></script>
+<script src="./scripts/route.js" type="module"></script>
+
+</html>

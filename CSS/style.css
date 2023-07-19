@@ -1,0 +1,585 @@
+:root {
+    --accent-color: #fff;
+    --text-color: #8585AE;
+    --border-color: rgba(133, 133, 174, 0.3);
+    --bg-color: #06060B;
+    --dia-bg-color: #0E0E18;
+}
+
+/* -- СПИСОК -- */
+
+.string {
+    gap: 10px;
+    align-items: center;
+}
+
+@media (max-width: 650px) {
+    main form {
+        flex-direction: column;
+    }
+}
+
+/* -- ОБЩЕЕ -- */
+
+.flex {
+    display: flex !important;
+}
+
+.column {
+    flex-direction: column;
+}
+
+.padding {
+    padding: 10px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.center {
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+    font-family: "Montserrat Alternates Light", sans-serif;
+    color: var(--text-color);
+}
+
+body {
+    background-color: #06060B;
+}
+
+main {
+    /* display: flex; */
+    margin-bottom: 50px;
+    gap: 10px;
+    justify-content: space-evenly;
+    height: 100%;
+}
+
+main form {
+    gap: 10px;
+}
+
+/* ТЕКСТ */
+
+p,
+span,
+label,
+li {
+    color: var(--text-color);
+    font-family: "Montserrat Alternates ExtraLight";
+}
+
+h1 {
+    font-family: "Montserrat Alternates Regular", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    color: var(--accent-color);
+    text-align: center;
+    font-size: 1.75em;
+    margin: 5px 0;
+}
+
+#time {
+    font-family: "Montserrat Alternates Light", sans-serif;
+    color: var(--text-color);
+    width: 110px;
+    align-self: center;
+    text-align: start;
+}
+
+h2 {
+    font-family: "Montserrat Alternates Light", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    color: var(--accent-color);
+    font-size: 20px;
+    line-height: 24px;
+    text-align: left;
+    margin: 5px 0;
+}
+
+.error {
+    width: 100%;
+    text-align: center;
+    padding-top: 25%;
+    display: block;
+}
+
+/* ЛОГО */
+
+header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+    height: 40px;
+}
+
+header p {
+    font-family: "Montserrat Alternates ExtraLight", sans-serif;
+    font-style: normal;
+    font-weight: ExtraLight;
+    color: var(--accent-color);
+    text-align: center;
+    line-height: 40px;
+}
+
+/* НАВБАР */
+
+nav {
+    background-color: #262643;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    justify-content: space-around;
+    padding: 10px 0;
+}
+
+.active svg path,
+.active svg circle,
+.active svg line,
+.active svg rect {
+    fill: #fff;
+}
+
+#dairy-link.active path {
+    fill: #262643;
+    stroke: #fff;
+}
+
+.error_text {
+    color: #94132A;
+    padding: 0;
+    font-family: "Montserrat Alternates Light", sans-serif;
+}
+
+#reset {
+    align-self: flex-start;
+}
+
+.buttons {
+    gap: 10px;
+}
+
+/* ЗАПИСЬ АУДИО/INDEX */
+
+.audio-btn {
+    width: 30vh;
+    Height: 30vh;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: linear-gradient(#E5B2CA 0%, #7028E4 100%);
+    box-shadow: 0px 0px 30px rgba(251, 207, 255, 0.1);
+    border-radius: 50%;
+}
+
+.toDark {
+    animation: changeColor ease-in forwards;
+}
+
+.toBright {
+    animation: changeColor ease-in reverse;
+}
+
+@keyframes changeColor {
+    0% {
+        background: linear-gradient(#E5B2CA 0%, #7028E4 100%);
+    }
+
+    100% {
+        background: linear-gradient(rgb(136, 106, 121) 0%, rgb(68, 25, 137) 100%);
+    }
+}
+
+#Recording {
+    gap: 15vh;
+    align-items: center;
+}
+
+#Recording svg {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ОДИН СОН */
+
+#title {
+    justify-content: space-between;
+    padding: 0 10px;
+    align-items: center;
+}
+
+.title {
+    align-items: center;
+    gap: 5%;
+}
+
+#title h1 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0 5px;
+}
+
+img#main-pic {
+    width: 100%;
+    height: 40vh;
+    object-fit: cover;
+}
+
+#infobar {
+    justify-content: space-between;
+}
+
+.tag-section {
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tags {
+    flex-wrap: wrap;
+    align-items: start;
+    width: 100%;
+}
+
+.tags li {
+    margin: 5px;
+    flex-grow: 0;
+}
+
+#dream-content {
+    padding: 0 5px;
+}
+
+#dream-content {
+    gap: 10px;
+}
+
+#prediction p {
+    text-indent: 5%;
+}
+
+/* БЛОК НЕСКОЛЬКИХ КАРТИНОК */
+
+.pictures {
+    flex-direction: column;
+    gap: 10px;
+    flex: 0 1;
+}
+
+.pictures img,
+.pictures label img {
+    border-radius: 5%;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.pictures label {
+    flex: 0 1;
+}
+
+#card-section {
+
+    border-top: 1px solid var(--border-color);
+    flex-direction: column-reverse;
+    padding-top: 10px;
+    gap: 10px;
+}
+
+.card {
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    cursor: pointer;
+    height: 110px;
+    gap: 12px;
+    padding: 5px;
+    max-width: calc(100vw - 20px);
+    justify-content: flex-start;
+}
+
+.card h2 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.card p {
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 5px;
+    width: 55%;
+    flex-grow: 1;
+}
+
+.image-card p {
+    line-height: 15vh;
+    font-size: 10px;
+}
+
+.image-card {
+    width: 30%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.image-card img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.btn {
+    min-width: 90px;
+    text-decoration: none;
+    color: var(--accent-color);
+    background: #262643;
+    border-radius: 12px;
+    align-self: center;
+    padding: 10px 10px;
+    border: none;
+}
+
+.btn:active {
+    background-color: var(--accent-color);
+    color: var(--dia-bg-color);
+}
+
+.del {
+    text-decoration: none;
+    border: none;
+    background: transparent;
+}
+
+#index {
+    gap: 10vh;
+}
+
+.forms {
+    margin: 0 16px;
+}
+
+#date-start,
+#date-stop {
+    background-color: var(--dia-bg-color);
+    border-radius: 16px;
+    outline: none;
+    box-sizing: border-box;
+    border: none;
+    color: var(--text-color);
+}
+
+input {
+    background: var(--dia-bg-color);
+    border-radius: 16px;
+    outline: none;
+    box-sizing: border-box;
+    border: none;
+    font-family: "Montserrat Alternates ExtraLight", sans-serif;
+    color: var(--accent-color);
+    padding: 5px 15px;
+}
+
+input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+.search input {
+    width: 100%;
+}
+
+#sendBtn:disabled,
+button:disabled,
+#time:disabled {
+    opacity: 0;
+}
+
+/* -- РЕДАКТИРОВАНИЕ -- */
+
+#emoji-edit {
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.gap {
+    gap: 5px;
+}
+
+.hidden {
+    visibility: hidden;
+    position: absolute;
+    width: 0px;
+}
+
+#main-pic label {
+    justify-content: center;
+}
+
+#main-pic label img {
+    width: 95%;
+    align-self: center;
+    box-sizing: content-box;
+}
+
+input[type="checkbox"]:checked+label>svg path,
+input[type="checkbox"]:checked+label>svg circle,
+input[type="checkbox"]:checked+label>svg line {
+    stroke: #fff;
+    stroke-opacity: 100%;
+}
+
+input[type="radio"]:checked+label>img {
+    border: 5px solid var(--text-color);
+}
+
+/* -- ДИАГРАММЫ -- */
+
+.dia-block {
+    background-color: var(--dia-bg-color);
+    border-radius: 5px;
+    margin: 5px 0 10px 0;
+}
+
+.dia-block span {
+    font-size: 0.8em;
+}
+
+#duration {
+    gap: 10px;
+    flex-direction: column;
+}
+
+#emotion-diagram {
+    gap: 5px;
+}
+
+#icons,
+#numbers {
+    justify-content: space-between;
+    padding: 2px 0;
+}
+
+#numbers span {
+    font-size: 18px;
+    font-family: "Montserrat Alternates ExtraLight";
+    color: var(--text-color);
+    text-align: center;
+}
+
+#icons img {
+    height: 28px;
+    box-sizing: border-box;
+}
+
+.bar-diagram {
+    width: 100%;
+}
+
+.bar {
+    height: 20px;
+    margin: 5px;
+    box-sizing: border-box;
+}
+
+.day {
+    width: 19px;
+    height: 19px;
+    margin: 3px;
+}
+
+#dream-days {
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0 0 10px
+}
+
+#dream-count {
+    justify-content: space-around;
+}
+
+#dream-count h2,
+#dream-count p {
+    flex: 0 1 50%;
+    color: var(--text-color) !important;
+    text-align: center;
+    line-height: 100%;
+    padding: 5%;
+}
+
+#neurals {
+    padding: 0 15px;
+    box-sizing: border-box;
+    height: 130px;
+}
+
+#legend {
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-evenly;
+    box-sizing: border-box;
+}
+
+#pie svg {
+    width: 100% !important;
+    height: auto !important;
+}
+
+.legend_row {
+    display: flex;
+    gap: 3px;
+    width: 100%;
+    padding: 0 10px;
+    align-items: center;
+}
+
+.dot {
+    height: 20px;
+    width: 20px;
+    background-color: #bbb;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.str {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* -- ШРИФТЫ -- */
+@font-face {
+    font-family: 'Montserrat Alternates Light';
+    src: url('../fonts/MontserratAlternates-Light.ttf') format('truetype');
+    font-style: normal;
+    font-weight: Light;
+}
+
+@font-face {
+    font-family: 'Montserrat Alternates Regular';
+    src: url('../fonts/MontserratAlternates-Regular.ttf') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat Alternates ExtraLight';
+    src: url('../fonts/MontserratAlternates-ExtraLight.ttf') format('truetype');
+    font-style: normal;
+    font-weight: ExtraLight;
+}
+
+@font-face {
+    font-family: 'Montserrat Alternates Thin';
+    src: url('../fonts/MontserratAlternates-Thin.ttf') format('truetype');
+    font-style: normal;
+    font-weight: Thin;
+}
