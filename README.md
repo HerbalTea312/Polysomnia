@@ -20,5 +20,6 @@
 - Создание и работа с SVG файлами
 
 ## Примеры работы
-![Страница записи](https://github.com/HerbalTea312/Polysomnia/raw/main/screenshots/запись_1.jpg) ![Страница "Дневник"]()
-<img src="https://github.com/HerbalTea312/Polysomnia/raw/main/screenshots/%D0%B4%D0%BD%D0%B5%D0%B2%D0%BD%D0%B8%D0%BA_1.jpg" width="200">
+<img src="https://github.com/HerbalTea312/Polysomnia/raw/main/screenshots/запись_1.jpg" width="200"> <img src="https://github.com/HerbalTea312/Polysomnia/raw/main/screenshots/%D0%B4%D0%BD%D0%B5%D0%B2%D0%BD%D0%B8%D0%BA_1.jpg" width="200"> <img src="https://github.com/HerbalTea312/Polysomnia/raw/main/screenshots/%D1%81%D0%BE%D0%BD_1.jpg" width="200">
+
+<img src="https://github.com/HerbalTea312/Polysomnia/raw/main/screenshots/%D0%B4%D0%B0%D1%88_1.jpg" width="200"> <img src="https://github.com/HerbalTea312/Polysomnia/blob/main/screenshots/%D0%B4%D0%B0%D1%88_2.jpg" width="200">
