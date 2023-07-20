@@ -20,4 +20,4 @@
 - Создание и работа с SVG файлами
 
 ## Примеры работы
-![Страница записи](https://github.com/HerbalTea312/Polysomnia/raw/master/screenshots/запись_1.jpg) ![Страница "Дневник"]()
+![Страница записи](https://github.com/HerbalTea312/Polysomnia/raw/main/screenshots/запись_1.jpg) ![Страница "Дневник"]()
