@@ -21,3 +21,4 @@
 
 ## Примеры работы
 ![Страница записи](https://github.com/HerbalTea312/Polysomnia/raw/main/screenshots/запись_1.jpg) ![Страница "Дневник"]()
+<img src="https://github.com/HerbalTea312/Polysomnia/raw/main/screenshots/%D0%B4%D0%BD%D0%B5%D0%B2%D0%BD%D0%B8%D0%BA_1.jpg" width="200">
