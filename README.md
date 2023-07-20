@@ -20,4 +20,4 @@
 - Создание и работа с SVG файлами
 
 ## Примеры работы
-![Alt Страница записи](https://disk.yandex.ru/i/UQT7ioyemKq5-g) ![Alt Страница "Дневник"](https://disk.yandex.ru/i/8gRJVuJi50Q0jg)
+![Страница записи](https://disk.yandex.ru/i/UQT7ioyemKq5-g.jpg) ![Страница "Дневник"](https://disk.yandex.ru/i/8gRJVuJi50Q0jg)
